@@ -1,4 +1,4 @@
-import $d from './../../helpers/dom-helpers.js';
+import { DOMHelpers as $d } from '@Utils';
 export default class Element {
     constructor(selector, options){
         if ( typeof selector !== 'string' ){

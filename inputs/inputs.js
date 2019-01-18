@@ -1,10 +1,10 @@
-import Selectr from '../../vendor/selectr.js'; 
-import $d from './../../helpers/dom-helpers.js';
-import Element from './../element/element.js';
+import Selectr from 'mobius1-selectr/dist/selectr.min.js';
+import { DOMHelpers as $d } from '@Utils';
+import Element from './../element/';
 
 export class TextInput extends Element {
-    constructor(selector = 'input'){
-        super(selector);
+    constructor(selector = 'input', options){
+        super(selector, options);
     }
     prerender(){
         var input = super.prerender();
@@ -20,16 +20,16 @@ export class TextInput extends Element {
 }
 
 export class Dropdown extends Element {
-    constructor(){
+   /* constructor(){
         super(...arguments);
-    }
+    }*/
     prerender(){
         
         var input = super.prerender();
         if ( this.prerendered ) {
             return input;
         }
-        this.model.forEach(each => {
+        this.data.forEach(each => {
             
             var option = $d.c('option');
             option.setAttribute('value', each.value);
@@ -41,7 +41,7 @@ export class Dropdown extends Element {
     }
     init(){
         
-        this.model.forEach((each, i)=> {
+        this.data.forEach((each, i)=> {
             
             this.el.options[i].pctModel = each; // HERE
         });

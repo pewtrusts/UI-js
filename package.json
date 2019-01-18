@@ -1,0 +1,22 @@
+{
+  "name": "us-js",
+  "version": "1.0.0",
+  "description": "Collectiuons of reusable okain vanilla js components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pewtrusts/UI-js.git"
+  },
+  "author": "John Osterman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pewtrusts/UI-js/issues"
+  },
+  "homepage": "https://github.com/pewtrusts/UI-js#readme",
+  "devDependencies": {
+    "mobius1-selectr": "^2.4.8"
+  }
+}
