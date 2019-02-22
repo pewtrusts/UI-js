@@ -7,7 +7,9 @@ export default class Element {
         } 
         this.selector = selector;
         this.model = options.model;
-        this.parent = options.parent;
+        this.parent = options.parent; // parent is a JS object
+        this.renderToSelector = options.renderToSelector;
+        this.container = $d.q(this.renderToSelector);
         this.children = options.children;
         this.rerender = ( options.rerenderOnDataMismatch && options.model.isMismatched );
         this.data = options.data;
