@@ -33,6 +33,9 @@ export class Dropdown extends Element {
             var option = $d.c('option');
             option.setAttribute('value', each.value);
             option.innerHTML = each.name;
+            if ( each.selected ){
+                option.setAttribute('selected', 'selected');
+            }
             input.appendChild(option)
         });
         
