@@ -1,5 +1,6 @@
 import { DOMHelpers as $d } from '@Utils';
 import Element from './../element/';
+import s from './styles.scss';
 
 export class TextInput extends Element {
     constructor(selector = 'input', options){
@@ -19,33 +20,56 @@ export class TextInput extends Element {
 }
 
 export class Dropdown extends Element {
-   /* constructor(){
-        super(...arguments);
-    }*/
+    constructor(selector, options){
+        console.log(selector);
+        var el = selector.split('.')[0].split('#')[0],
+            klass,
+            id;
+
+        if ( el !== 'div' ) {
+            if ( selector.split('.').length > 1 ){
+                klass = selector.split('.')[0].split('#')[0]; 
+            }
+            if ( selector.split('#').length > 1 ){
+                id = selector.split('#')[0].split('.')[0]; 
+            }  
+            console.log('Dropdown element must be a div; coercing . . .');
+            el = 'div';
+            selector = el + ( id !== undefined ? '#' + id : '' ) + ( klass !== undefined ? '.' + klass : '' );
+        }
+
+        super(selector, options);
+
+        this.options = this.el.querySelector('ul');
+    }
     prerender(){
         
-        var input = super.prerender();
+        var wrapper = super.prerender();
         if ( this.prerendered ) {
-            return input;
+            return wrapper;
         }
+        var input = $d.c('div');
+        var optionsList = $d.c('ul');
         this.data.forEach(each => {
             
-            var option = $d.c('option');
-            option.setAttribute('value', each.value);
+            var option = $d.c('li');
+            option.setAttribute('data-value', each.value);
             option.innerHTML = each.name;
             if ( each.selected ){
                 option.setAttribute('selected', 'selected');
             }
-            input.appendChild(option)
+            optionsList.appendChild(option)
         });
-        
-        return input;
+        wrapper.appendChild(input)
+        wrapper.appendChild(optionsList)
+        wrapper.classList.add(s.PCTDropdown);
+        return wrapper;
     }
     init(){
-        
-        this.data.forEach((each, i)=> {
-            
-            this.el.options[i].pctModel = each; // HERE
-        });
+       console.log(this);
+       this.el.addEventListener('click', this.clickHandler.bind(this));
+    }
+    clickHandler(){
+        this.el.classList.toggle(s.isOpen);
     }
 }
