@@ -41,6 +41,27 @@ export class Dropdown extends Element {
         super(selector, options);
 
         this.options = this.el.querySelector('ul');
+        this.body = document.querySelector('body');
+        this._isOpen = false;
+    }
+    set isOpen(bool){
+
+        this._isOpen = bool;
+        function bodyClickHandler(){
+            this.isOpen = false;
+        }
+        if ( bool ){
+            this.el.classList.add(s.isOpen);
+            this.body.UIControlIsOpen = true;
+            this.body.addEventListener('click', bodyClickHandler.bind(this));
+        } else {
+            this.el.classList.remove(s.isOpen);
+            this.body.UIControlIsOpen = false;
+            this.body.removeEventListener('click', bodyClickHandler.bind(this));   
+        }
+    }
+    get isOpen() {
+        return this._isOpen;
     }
     prerender(){
         
@@ -69,7 +90,10 @@ export class Dropdown extends Element {
        console.log(this);
        this.el.addEventListener('click', this.clickHandler.bind(this));
     }
-    clickHandler(){
-        this.el.classList.toggle(s.isOpen);
+    clickHandler(e){
+        if ( this.isOpen || !this.body.UIControlIsOpen ){
+            e.stopPropagation();
+            this.isOpen = !this.isOpen;
+        }
     }
 }
