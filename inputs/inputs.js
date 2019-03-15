@@ -77,20 +77,82 @@ export class Dropdown extends Element {
             option.setAttribute('data-value', each.value);
             option.innerHTML = each.name;
             if ( each.selected ){
-                option.setAttribute('selected', 'selected');
+                option.classList.add('selected');
+                input.textContent = each.name;
             }
             optionsList.appendChild(option)
         });
         wrapper.appendChild(input)
         wrapper.appendChild(optionsList)
         wrapper.classList.add(s.PCTDropdown);
+        wrapper.setAttribute('tabindex', '0');
         return wrapper;
     }
     init(){
        console.log(this);
+       this.selectedOption = this.el.querySelector('li.selected');
+       this.toBeSelected = this.el.querySelector('li.selected');
        this.el.addEventListener('click', this.clickHandler.bind(this));
+       this.el.addEventListener('keydown', e => {
+        console.log(e.keyCode);
+            if ( [9,32,38,40].indexOf(e.keyCode) > -1 ){ // tab, down arrow of space bar
+                if ( e.keyCode !== 9 ) {
+                    e.preventDefault();
+                }
+                this.clickHandler.call(this, e);
+            }
+            if ( [13,27, 32].indexOf(e.keyCode > -1 ) ){
+                if ( this.isOpen ) {
+                    this.enterEscapeSpaceHandler.call(this, e);
+                }
+            }
+        });
+       
+    }
+    enterEscapeHandler(e){
+        if ( e.keyCode === 27 ) { // esc key
+            this.toBeSelected.classList.remove('selected');
+            this.selectedOption.classList.add('selected');
+            this.toBeSelected = this.selectedOption;
+            this.isOpen = false;    
+        } else {
+            this.selectedOption = this.toBeSelected;
+            // **** TO DO: make the statechange here 
+            // displayed value is not changing
+            // use setter on _selectedOption to trigger the displayed value (textContent) and the stateChange
+            this.isOpen = false;
+        }
     }
     clickHandler(e){
+        console.log(e, this);
+        if ( e.type === 'keydown' && e.keyCode === 9 ){ // tab
+            if ( this.isOpen ) {
+                e.preventDefault();
+            }
+            return;
+        }
+        if ( e.type === 'keydown' && [38,40].indexOf(e.keyCode) > -1 && this.isOpen ){
+            
+            if ( e.keyCode === 38 ) {
+
+                if ( this.toBeSelected.previousElementSibling ) {
+                    this.toBeSelected.classList.remove('selected');
+                    this.toBeSelected = this.toBeSelected.previousElementSibling
+                    this.toBeSelected.classList.add('selected');
+                    //this.selectedOption = newSelected;
+                }
+                return;
+            }
+            if ( e.keyCode === 40 ) {
+                if ( this.toBeSelected.nextElementSibling ) {
+                    this.toBeSelected.classList.remove('selected');
+                    this.toBeSelected = this.toBeSelected.nextElementSibling
+                    this.toBeSelected.classList.add('selected');
+                    //this.selectedOption = newSelected;
+                }
+                return;
+            }
+        }
         if ( this.isOpen || !this.body.UIControlIsOpen ){
             e.stopPropagation();
             this.isOpen = !this.isOpen;
