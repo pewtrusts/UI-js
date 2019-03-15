@@ -63,13 +63,27 @@ export class Dropdown extends Element {
     get isOpen() {
         return this._isOpen;
     }
+    set selectedOption(item) {
+        this._selectedOption = item;
+        this.isOpen = false;
+        this.input.textContent = this._selectedOption.innerText;
+
+        if ( this.onChange ) {
+            this.onChange();
+        } else {
+            console.log('Instance of Dropdown class needs an onChange method to handle selection of a new value');
+        }
+    }
+    get selectedOption() {
+        return this._selectedOption;
+    }
     prerender(){
         
         var wrapper = super.prerender();
         if ( this.prerendered ) {
             return wrapper;
         }
-        var input = $d.c('div');
+        var input = $d.c('div.js-input-div');
         var optionsList = $d.c('ul');
         this.data.forEach(each => {
             
@@ -90,69 +104,83 @@ export class Dropdown extends Element {
     }
     init(){
        console.log(this);
-       this.selectedOption = this.el.querySelector('li.selected');
+       this.input = this.el.querySelector('.js-input-div');
+       this.el.querySelectorAll('li').forEach(item => {
+            item.addEventListener('click', e => {
+                e.stopPropagation();
+                this.itemClickHandler(item);
+            });
+       }); 
+       this._selectedOption = this.el.querySelector('li.selected');
        this.toBeSelected = this.el.querySelector('li.selected');
        this.el.addEventListener('click', this.clickHandler.bind(this));
        this.el.addEventListener('keydown', e => {
-        console.log(e.keyCode);
-            if ( [9,32,38,40].indexOf(e.keyCode) > -1 ){ // tab, down arrow of space bar
-                if ( e.keyCode !== 9 ) {
-                    e.preventDefault();
-                }
-                this.clickHandler.call(this, e);
+            console.log(e.keyCode);
+            if ( e.keyCode === 9 ) {
+                this.tabHandler.call(this,e);
+                return;
             }
-            if ( [13,27, 32].indexOf(e.keyCode > -1 ) ){
+            if ( [32,38,40].indexOf(e.keyCode) > -1 ){ // 32 space, 38 up arrow, 40 down arrow
+                e.preventDefault(); // prevent scrolling on space and arrow
+                this.spaceAndArrowHandler.call(this, e);
+                return;
+            }
+            if ( [13,27].indexOf(e.keyCode > -1 ) ){ // 13 enter, 27 escape
                 if ( this.isOpen ) {
-                    this.enterEscapeSpaceHandler.call(this, e);
+                    this.enterAndEscapeHandler.call(this, e);
                 }
+                return;
             }
         });
        
     }
-    enterEscapeHandler(e){
+    itemClickHandler(item){
+        this.toBeSelected.classList.remove('selected');
+        this.toBeSelected = item;
+        this.toBeSelected.classList.add('selected');
+        this.selectedOption = this.toBeSelected;
+    }
+    enterAndEscapeHandler(e){ // only called is this.isOpen
         if ( e.keyCode === 27 ) { // esc key
+            console.log('escape key');
             this.toBeSelected.classList.remove('selected');
             this.selectedOption.classList.add('selected');
             this.toBeSelected = this.selectedOption;
             this.isOpen = false;    
         } else {
             this.selectedOption = this.toBeSelected;
-            // **** TO DO: make the statechange here 
-            // displayed value is not changing
-            // use setter on _selectedOption to trigger the displayed value (textContent) and the stateChange
-            this.isOpen = false;
         }
     }
-    clickHandler(e){
-        console.log(e, this);
-        if ( e.type === 'keydown' && e.keyCode === 9 ){ // tab
-            if ( this.isOpen ) {
-                e.preventDefault();
+    spaceAndArrowHandler(e){
+        if ( e.keyCode === 32 ) { // space
+            if ( !this.isOpen ) {
+                this.isOpen = true;
+            } else {
+                // here call to fn that selects the toBeSlected option
             }
             return;
         }
-        if ( e.type === 'keydown' && [38,40].indexOf(e.keyCode) > -1 && this.isOpen ){
-            
-            if ( e.keyCode === 38 ) {
-
-                if ( this.toBeSelected.previousElementSibling ) {
-                    this.toBeSelected.classList.remove('selected');
-                    this.toBeSelected = this.toBeSelected.previousElementSibling
-                    this.toBeSelected.classList.add('selected');
-                    //this.selectedOption = newSelected;
-                }
-                return;
-            }
-            if ( e.keyCode === 40 ) {
-                if ( this.toBeSelected.nextElementSibling ) {
-                    this.toBeSelected.classList.remove('selected');
-                    this.toBeSelected = this.toBeSelected.nextElementSibling
-                    this.toBeSelected.classList.add('selected');
-                    //this.selectedOption = newSelected;
-                }
-                return;
+        // arrow keys
+        if ( !this.isOpen ){
+            this.isOpen = true;
+            return;
+        }
+        // is open
+        {
+            let next = e.keyCode === 38 ? this.toBeSelected.previousElementSibling : this.toBeSelected.nextElementSibling; 
+            if ( next ) { // if there is an option before/after the currently toBeSelected option, make that the toBeSelected option
+                this.toBeSelected.classList.remove('selected');
+                this.toBeSelected = next;
+                this.toBeSelected.classList.add('selected');
             }
         }
+    }
+    tabHandler(e){
+        if ( this.isOpen ){
+            e.preventDefault();
+        }
+    }
+    clickHandler(e){
         if ( this.isOpen || !this.body.UIControlIsOpen ){
             e.stopPropagation();
             this.isOpen = !this.isOpen;
