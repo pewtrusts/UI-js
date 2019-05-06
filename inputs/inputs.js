@@ -84,13 +84,18 @@ export class Dropdown extends Element {
             return wrapper;
         }
         var input = $d.c('div.js-input-div');
+
         var optionsList = $d.c('ul');
         this.data.forEach(each => {
             
             var option = $d.c('li');
             option.setAttribute('data-value', each.value);
+            option.setAttribute('aria-role', 'option');
             option.innerHTML = each.name;
+
+            option.id = 'dropdown-item-' + each.value;
             if ( each.selected ){
+                option.setAttribute('aria-selected', 'true');
                 option.classList.add('selected');
                 input.textContent = each.name;
             }
@@ -99,6 +104,7 @@ export class Dropdown extends Element {
         wrapper.appendChild(input)
         wrapper.appendChild(optionsList)
         wrapper.classList.add(s.PCTDropdown);
+        wrapper.setAttribute('aria-role','listbox');
         wrapper.setAttribute('tabindex', '0');
         return wrapper;
     }
@@ -135,9 +141,13 @@ export class Dropdown extends Element {
        
     }
     itemClickHandler(item){
+        console.log(this,item);
         this.toBeSelected.classList.remove('selected');
+        this.toBeSelected.removeAttribute('aria-selected');
         this.toBeSelected = item;
         this.toBeSelected.classList.add('selected');
+        this.toBeSelected.setAttribute('aria-selected', 'true');
+        this.el.setAttribute('activedescendant', item.id);
         this.selectedOption = this.toBeSelected;
     }
     enterAndEscapeHandler(e){ // only called is this.isOpen
