@@ -52,10 +52,12 @@ export class Dropdown extends Element {
         }
         if ( bool ){
             this.el.classList.add(s.isOpen);
+            this.el.setAttribute('aria-expanded', true);
             this.body.UIControlIsOpen = true;
             this.body.addEventListener('click', bodyClickHandler.bind(this));
         } else {
             this.el.classList.remove(s.isOpen);
+            this.el.setAttribute('aria-expanded', false);
             this.body.UIControlIsOpen = false;
             this.body.removeEventListener('click', bodyClickHandler.bind(this));   
         }
@@ -105,6 +107,7 @@ export class Dropdown extends Element {
         wrapper.appendChild(optionsList)
         wrapper.classList.add(s.PCTDropdown);
         wrapper.setAttribute('aria-role','listbox');
+        wrapper.setAttribute('aria-expanded','false');
         wrapper.setAttribute('tabindex', '0');
         return wrapper;
     }
