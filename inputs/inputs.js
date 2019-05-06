@@ -85,9 +85,15 @@ export class Dropdown extends Element {
         if ( this.prerendered ) {
             return wrapper;
         }
+        wrapper.setAttribute('aria-haspopup', 'listbox');
+        wrapper.setAttribute('aria-expanded', 'false');
+        wrapper.setAttribute('role', 'button');
         var input = $d.c('div.js-input-div');
 
         var optionsList = $d.c('ul');
+        console.log(this);
+        optionsList.setAttribute('aria-role','listbox');
+        //optionsList.setAttribute('aria-labelledby', 'label-dropdown-' + this.dropdownType );
         this.data.forEach(each => {
             
             var option = $d.c('li');
@@ -100,14 +106,14 @@ export class Dropdown extends Element {
                 option.setAttribute('aria-selected', 'true');
                 option.classList.add('selected');
                 input.textContent = each.name;
+                optionsList.setAttribute('aria-activedescendant', option.id);
             }
             optionsList.appendChild(option)
         });
         wrapper.appendChild(input)
         wrapper.appendChild(optionsList)
         wrapper.classList.add(s.PCTDropdown);
-        wrapper.setAttribute('aria-role','listbox');
-        wrapper.setAttribute('aria-expanded','false');
+        //wrapper.setAttribute('aria-expanded','false');
         wrapper.setAttribute('tabindex', '0');
         return wrapper;
     }
@@ -121,6 +127,7 @@ export class Dropdown extends Element {
             });
        }); 
        this._selectedOption = this.el.querySelector('li.selected');
+
        this.toBeSelected = this.el.querySelector('li.selected');
        this.el.addEventListener('click', this.clickHandler.bind(this));
        this.el.addEventListener('keydown', e => {
@@ -150,7 +157,7 @@ export class Dropdown extends Element {
         this.toBeSelected = item;
         this.toBeSelected.classList.add('selected');
         this.toBeSelected.setAttribute('aria-selected', 'true');
-        this.el.setAttribute('activedescendant', item.id);
+        this.options.setAttribute('aria-activedescendant', item.id);
         this.selectedOption = this.toBeSelected;
     }
     enterAndEscapeHandler(e){ // only called is this.isOpen
