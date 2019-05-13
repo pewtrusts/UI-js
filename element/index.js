@@ -25,13 +25,9 @@ export default class Element {
             });
         });
         if ( !this.prerendered && this.container ){ // if is not prerendered and container already exists
-            console.log('container exists! appending');
             this.container.appendChild(this.el);
             this.resolve(true);
-        } else if  ( this.renderToSelector ) { // is not prerendered but container does not yet exist
-            console.log(this, 'container ' + this.renderToSelector + ' does not exists. waiting');
         }
-        
     }
     prerender(){
         
