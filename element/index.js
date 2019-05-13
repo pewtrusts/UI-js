@@ -15,6 +15,9 @@ export default class Element {
         this.data = options.data;
         this.createComponent = options.createComponent || null; // null option for backward compatibility. previous version don't send this property
         this.el = this.prerender(arguments); // will call the instance's prerender
+        if ( !this.prerendered && this.container ){
+            this.container.appendChild(this.el);
+        }
         this.isReady = new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
@@ -34,6 +37,7 @@ export default class Element {
             existing.innerHTML = '';
             return existing;
         }
+        // is not yet existing
         var el = $d.c(this.selector);
         return el;
     }
