@@ -15,13 +15,22 @@ export default class Element {
         this.data = options.data;
         this.createComponent = options.createComponent || null; // null option for backward compatibility. previous version don't send this property
         this.el = this.prerender(arguments); // will call the instance's prerender
-        if ( !this.prerendered && this.container ){
-            this.container.appendChild(this.el);
-        }
         this.isReady = new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
+        }).then(() => {
+            this.children.forEach(child => {
+                child.container = $d.q(child.renderToSelector);
+                child.container.appendChild(child.el);
+            });
         });
+        if ( !this.prerendered && this.container ){ // if is not prerendered and container already exists
+            console.log('container exists! appending');
+            this.container.appendChild(this.el);
+            this.resolve(true);
+        } else if  ( this.renderToSelector ) { // is not prerendered but container does not yet exist
+            console.log(this, 'container ' + this.renderToSelector + ' does not exists. waiting');
+        }
         
     }
     prerender(){
