@@ -16,13 +16,16 @@ export default class Element {
         this.data = options.data;
         this.createComponent = options.createComponent || null; // null option for backward compatibility. previous version don't send this property
         this.el = this.prerender(arguments); // will call the instance's prerender
+        console.log(this.name);
         this.isReady = new Promise((resolve, reject) => {
             this.resolve = resolve;
             this.reject = reject;
         }).then(() => {
             this.children.forEach(child => {
+                console.log(this.name, child);
                 child.container = $d.q(child.renderToSelector);
                 child.container.appendChild(child.el);
+                child.resolve(true);
             });
         });
         if ( !this.prerendered && this.container ){ // if is not prerendered and container already exists
