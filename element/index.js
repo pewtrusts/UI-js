@@ -10,7 +10,7 @@ export default class Element {
         this.parent = options.parent; // parent is a JS object
         this.app = options.app; // parent is a JS object
         this.renderToSelector = options.renderToSelector;
-        this.container = $d.q(this.renderToSelector);
+        this.container = this.renderToSelector ? $d.q(this.renderToSelector) : options.renderToElement;
         this.children = options.children;
         this.rerender = ( options.rerenderOnDataMismatch && options.model.isMismatched );
         this.data = options.data;
@@ -21,7 +21,7 @@ export default class Element {
             this.reject = reject;
         }).then(() => {
             this.children.forEach(child => {
-                child.container = $d.q(child.renderToSelector);
+                child.container = child.renderToSelector ? $d.q(child.renderToSelector) : child.renderToElement ? child.renderToElement : child.parent.el;
                 child.container.appendChild(child.el);
                 child.resolve(true);
             });
