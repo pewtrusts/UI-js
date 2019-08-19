@@ -77,10 +77,10 @@ export default class Facet extends Element {
                 });
             }*/
         });
-        if (['state','year'].indexOf(this.data.key) === -1 ) {
+        /*if (['state','year'].indexOf(this.data.key) === -1 ) {
             body.appendChild(topicHeading);
             list.classList.add(s.hasH3)
-        }
+        }*/
         body.appendChild(list);
 
         view.appendChild(heading);
