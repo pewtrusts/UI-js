@@ -21,7 +21,7 @@ export default class Facet extends Element {
         
         //heading
         var heading = document.createElement('div');
-        heading.textContent = this.model.dictionary && this.model.dictionary[this.data.key] ? this.model.dictionary[this.data.key] : '[Uncategorized]';
+        heading.textContent = this.model.dictionary && this.model.dictionary[this.data.key] ? this.model.dictionary[this.data.key] : this.data.key;
         heading.insertAdjacentHTML('beforeend', arrowSVG);
         heading.classList.add('js-facet-heading', s.searchFacetHeading);
 
