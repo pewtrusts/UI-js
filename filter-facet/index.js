@@ -55,7 +55,7 @@ export default class Facet extends Element {
             list.appendChild(listItem);
             
             //sublist
-            if ( ['state','year'].indexOf(this.data.key) === -1 && topic.values.length > 1 ){ // values are nested by subtopic. all have at least one (key === ''), more if there are actual keys/subtopics
+            /*if ( ['state','year'].indexOf(this.data.key) === -1 && topic.values.length > 1 ){ // values are nested by subtopic. all have at least one (key === ''), more if there are actual keys/subtopics
                 topic.values.forEach(subtopic => {
                     var subitem = document.createElement('li');
                     subitem.innerHTML = `&nbsp;&nbsp;-- ${subtopic.key} (<span class="js-topic-count">${subtopic.values.length}</span>)`;
@@ -75,7 +75,7 @@ export default class Facet extends Element {
 
                     list.appendChild(subitem);
                 });
-            }
+            }*/
         });
         if (['state','year'].indexOf(this.data.key) === -1 ) {
             body.appendChild(topicHeading);
