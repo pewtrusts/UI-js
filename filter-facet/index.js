@@ -6,14 +6,14 @@ import { stateModule as S } from 'stateful-dead';
 import tippy from 'tippy.js';
 import { GTMPush } from '@Utils';
 
-
-
 export default class Facet extends Element {
     
     prerender(){
          //container
         var view = super.prerender();
         this.name = 'Facet';
+        this.model = this.model || {};
+        this.children = this.children || [];
         if ( this.prerendered && !this.rerender) {
             return view; // if prerendered and no need to render (no data mismatch)
         }
@@ -21,7 +21,7 @@ export default class Facet extends Element {
         
         //heading
         var heading = document.createElement('div');
-        heading.textContent = this.model.dictionary[this.data.key] || '[Uncategorized]';
+        heading.textContent = this.model.dictionary && this.model.dictionary[this.data.key] ? this.model.dictionary[this.data.key] : '[Uncategorized]';
         heading.insertAdjacentHTML('beforeend', arrowSVG);
         heading.classList.add('js-facet-heading', s.searchFacetHeading);
 
@@ -44,7 +44,7 @@ export default class Facet extends Element {
             listItem.dataset.key = this.data.key;
             listItem.classList.add(s.facetItem, 'js-facet-item', 'js-facet-item-topic');
             listItem.setAttribute('role','button');
-            if ( this.model.topicToCategory[topic.key] && this.model.topicToCategory[topic.key].definition !== "" ){
+            if ( this.model.topicToCategory && this.model.topicToCategory[topic.key] && this.model.topicToCategory[topic.key].definition !== "" ){
                 listItem.classList.add(s.hasDefinition);
                 let btn = document.createElement('button');
                 btn.classList.add('js-definition-button');
@@ -65,7 +65,7 @@ export default class Facet extends Element {
                     subitem.dataset.key = this.data.key;
                     subitem.dataset.topic = topic.key;
                     subitem.setAttribute('role','button');
-                    if ( this.model.topicToCategory[subtopic.key] && this.model.topicToCategory[subtopic.key].definition !== "" ){
+                    if ( this.model.topicToCategory && this.model.topicToCategory[subtopic.key] && this.model.topicToCategory[subtopic.key].definition !== "" ){
                         subitem.classList.add(s.hasDefinition);
                         let btn = document.createElement('button');
                         btn.classList.add('js-definition-button');
@@ -136,7 +136,9 @@ export default class Facet extends Element {
                     return;
                 }
                 if ( !this.isSelected ){
-                    _this.app.listView.showChurning.call(_this.app.listView, true);
+                    if (_this.app){
+                        _this.app.listView.showChurning.call(_this.app.listView, true);
+                    }
                     S.setState('filter.' + this.dataset.type, this.dataset.value);
                     GTMPush(`Broadband|Filter|${this.dataset.type}|${this.dataset.value}`);
                     this.isSelected = true;
@@ -146,7 +148,9 @@ export default class Facet extends Element {
                         parent.classList.add(s.hasChildSelected);
                     }
                 } else {
-                    _this.app.listView.showChurning.call(_this.app.listView, true);
+                    if (_this.app){
+                        _this.app.listView.showChurning.call(_this.app.listView, true);
+                    }
                     S.setState('filter.' + this.dataset.type, null);
                     this.isSelected = false;
                     this.classList.remove(s.isSelected);
@@ -161,11 +165,13 @@ export default class Facet extends Element {
             if ( this.isEmpty ) {
                 return;
             }
+            if ( this.parent ){
             this.parent.topicFacets.forEach(facet => {
                 if ( facet !== this && this.data.key !== 'state' && this.data.key !== 'year' ){
                     facet.isOpen = false;
                 }
             });
+        }
             this.isOpen = !this.isOpen;
         });
         tippy(this.definitionButtons);
