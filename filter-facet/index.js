@@ -57,23 +57,25 @@ export default class Facet extends Element {
             //sublist
             if ( ['state','year'].indexOf(this.data.key) === -1 && topic.values.length > 1 ){ // values are nested by subtopic. all have at least one (key === ''), more if there are actual keys/subtopics
                 topic.values.forEach(subtopic => {
-                    var subitem = document.createElement('li');
-                    subitem.innerHTML = `&nbsp;&nbsp;-- ${subtopic.key} (<span class="js-topic-count">${subtopic.values.length}</span>)`;
-                    subitem.classList.add(s.facetItem, 'js-facet-item');
-                    subitem.dataset.value = subtopic.key;
-                    subitem.dataset.type = 'subtopic';
-                    subitem.dataset.key = this.data.key;
-                    subitem.dataset.topic = topic.key;
-                    subitem.setAttribute('role','button');
-                    if ( this.model.topicToCategory[subtopic.key] && this.model.topicToCategory[subtopic.key].definition !== "" ){
-                        subitem.classList.add(s.hasDefinition);
-                        let btn = document.createElement('button');
-                        btn.classList.add('js-definition-button');
-                        btn.dataset.tippyContent = this.model.topicToCategory[subtopic.key].definition;
-                        subitem.appendChild(btn);
-                    }
+                    if ( subtopic.key !== ''){
+                        let subitem = document.createElement('li');
+                        subitem.innerHTML = `&nbsp;&nbsp;-- ${subtopic.key} (<span class="js-topic-count">${subtopic.values.length}</span>)`;
+                        subitem.classList.add(s.facetItem, 'js-facet-item');
+                        subitem.dataset.value = subtopic.key;
+                        subitem.dataset.type = 'subtopic';
+                        subitem.dataset.key = this.data.key;
+                        subitem.dataset.topic = topic.key;
+                        subitem.setAttribute('role','button');
+                        if ( this.model.topicToCategory[subtopic.key] && this.model.topicToCategory[subtopic.key].definition !== "" ){
+                            subitem.classList.add(s.hasDefinition);
+                            let btn = document.createElement('button');
+                            btn.classList.add('js-definition-button');
+                            btn.dataset.tippyContent = this.model.topicToCategory[subtopic.key].definition;
+                            subitem.appendChild(btn);
+                        }
 
-                    list.appendChild(subitem);
+                        list.appendChild(subitem);
+                    }
                 });
             }
         });
