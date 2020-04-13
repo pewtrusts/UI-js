@@ -81,6 +81,10 @@
         background: svg-load('./checkmark.svg') $very_light_blue no-repeat;
         background-position:  calc(100% - 10px);
     }
+    &[data-type="subtopic"] {
+        padding-left: 52px;
+        text-indent: -22px;
+    }
 }
 .topicHeading {
     background-image: linear-gradient($very_light_blue, $very_light_blue 80%, rgba(255,255,255,0)) !important;
